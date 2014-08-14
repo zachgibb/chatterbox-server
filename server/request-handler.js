@@ -24,22 +24,33 @@ exports.handleRequest = function(request, response) {
 
   // check url
   if(request.url === "/classes/messages"){
-    statusCode = 200;
     headers['Content-Type'] = "application/json";
-    response.writeHead(statusCode, headers);
     //do some work
+
     if(request.method === "GET"){
+      statusCode = 200;
+      response.writeHead(statusCode, headers);
       response.end(JSON.stringify(datas));
-      console.log(datas);
-
-  
     }
-    else if(request.method === "POST"){
 
+    else if(request.method === "POST"){
+      statusCode = 201;
+      console.log('trying to post');
+
+      var body = "";
+      request.on('data', function(data){
+
+        body+=data;
+        datas.results.push(JSON.parse(body));
+        
+      })
+      response.writeHead(statusCode, headers);
       response.end("Data");
     }
 
-  }else{
+    
+
+  } else{
     statusCode = 404;
     response.writeHead(statusCode, headers);
     response.end("page not found!");

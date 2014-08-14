@@ -1,2 +1,5 @@
 .floo
+.flooignore
 node_modules/
+server/data.*
+client/*

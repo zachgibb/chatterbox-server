@@ -1,5 +1,5 @@
 var parseUrl = require('url');
-var fs = require('fs');
+
 var utils = require('./utils');
 
 
@@ -12,6 +12,7 @@ var utils = require('./utils');
  * *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html. */
 
 var allMessages = [];
+var messageId = 1;
 
 var paths = {
   "/classes/messages": 1,
@@ -37,9 +38,12 @@ exports.handler = function(request, response) {
         break;
       case "POST":
         utils.getMessage(request, function(message){
-          allMessages.unshift(message);
+          message.objectId = messageId;
+          console.log(message, "line 42");
+          allMessages.push(message);
           utils.sendResponse(response, null, 201);
         });
+        messageId++;
         break;
       case "OPTIONS":
         utils.sendResponse(response);

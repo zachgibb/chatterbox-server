@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 var defaultCorsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, OPTIONS",
@@ -6,6 +8,7 @@ var defaultCorsHeaders = {
   "Content-Type": "application/json"
 };
 var headers = defaultCorsHeaders;
+
 exports.sendPage = function(response, data, status, type){
   status = status || 200;
   headers["Content-Type"] = "text/html";

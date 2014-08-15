@@ -1,13 +1,8 @@
 var parseUrl = require('url');
 var fs = require('fs');
+var utils = require('./utils');
 
-var defaultCorsHeaders = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, OPTIONS",
-  "access-control-allow-headers": "content-type, accept, X-Parse-Application-Id, X-Parse-REST-API-Key",
-  "access-control-max-age": 10, // Seconds.
-  "Content-Type": "application/json"
-};
+
 
 /* You should implement your request handler function in this file.
  * And hey! This is already getting passed to http.createServer()
@@ -15,36 +10,8 @@ var defaultCorsHeaders = {
  * You'll have to figure out a way to export this function from
  * this file and include it in basic-server.js so that it actually works.
  * *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html. */
-var headers = defaultCorsHeaders;
+
 var allMessages = [];
-
-var sendPage = function(response, data, status, type){
-  status = status || 200;
-  headers["Content-Type"] = "text/html";
-  response.writeHead(status, headers);
-  fs.readFile(data, function(err, html){
-    if(err){
-      response.end("file not found");
-    }
-    response.end(html);
-  })
-};
-
-var sendResponse = function(response, data, status){
-  status = status || 200;
-  response.writeHead(status, headers);
-  response.end(JSON.stringify(data));
-};
-
-var getMessage = function(request, callback){
-  var message = "";
-  request.on('data', function(data){
-    message+=data;
-  });
-  request.on('end', function(){
-    callback(JSON.parse(message));
-  });
-};
 
 var paths = {
   "/classes/messages": 1,
@@ -66,26 +33,26 @@ exports.handler = function(request, response) {
  if(paths[baseUrl]){
     switch(request.method){
       case "GET":
-        sendResponse(response, {"results": allMessages});
+        utils.sendResponse(response, {"results": allMessages});
         break;
       case "POST":
-        getMessage(request, function(message){
+        utils.getMessage(request, function(message){
           allMessages.unshift(message);
-          sendResponse(response, null, 201);
+          utils.sendResponse(response, null, 201);
         });
         break;
       case "OPTIONS":
-        sendResponse(response);
+        utils.sendResponse(response);
         break;
       
     }
 
   } else if (baseUrl === '/') {
     console.log('you are trying to get the html page');
-    sendPage(response, "./client/index.html");
-    
+    utils.sendPage(response, "./client/index.html");
+
   } else{
-    sendResponse(response, 'not found', 404);
+    utils.sendResponse(response, 'not found', 404);
   }
 
 
